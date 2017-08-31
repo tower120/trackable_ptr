@@ -32,7 +32,8 @@ TrackerBase::~TrackerBase() {
         prev->next = nullptr;
     }
     else {
-        prev->next = next->prev;
+        prev->next = next;
+        next->prev = prev;
     }
 }
 
