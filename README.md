@@ -1,6 +1,8 @@
 # trackable_ptr
 Trackable pointer. When trackable object moved/destroyed, trackers updated with new object's pointer.
 
+[Live example](http://coliru.stacked-crooked.com/a/c6a2e71ea86f8902)
+
 Allow to have stable pointer on stack allocated movable object (at least in single-threaded environment).
 Like:
 
