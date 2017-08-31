@@ -33,3 +33,11 @@ TrackablePtr<Data> data = makeData();
 Does not increase object lifetime (like shared_ptr)
 
 Kinda replacement for weak_ptr in terms of object aliveness track.
+
+
+
+### Overhead
+1 ptr for Trackable
+3 ptr for Tracker
+
+O(n) complexity for moving/destroying Trackable. Where n = trackers count.
