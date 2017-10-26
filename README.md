@@ -3,44 +3,39 @@ Trackable pointer. When trackable object moved/destroyed, trackers updated with 
 
 [Live example](http://coliru.stacked-crooked.com/a/c6a2e71ea86f8902)
 
-Allow to have stable pointer on stack allocated movable object (at least in single-threaded environment).
+Allow to have stable pointer on any movable object (in single-threaded environment).
 Like:
 
-    struct Data{
-        int x,y,z;
-    };
-    using TData = Trackable<Data>;
+```c++
+struct Data{
+    int x,y,z;
+};
 
-    // Data lies in the continuous space
-    std::vector< TData > list1;
+std::vector< trackable<Data> > list1;
 
-    TrackablePtr<Data> makeData(){
-        list1.emplace_back();
-        return {list1.back()};
-    }
+list1.emplace_back();
 
+	trackable_ptr<Data> data {list1.back()};	//  store pointer to element
 
-    TrackablePtr<Data> data = makeData();
+list1.emplace_back();
+list1.emplace_back();
+list1.emplace_back();
+list1.emplace_back();
+// list 1 now uses another memory chuck. All pointers/iterators invalidated.
 
-        list1.emplace_back();
-        list1.emplace_back();
-        list1.emplace_back();
-        list1.emplace_back();
-        // list 1 now uses another memory chuck. All pointers/iterators invalidated.
-
-    // data still alive and accessible;
-    std::cout << data->x;
+// data still alive and accessible;
+std::cout << data->x;
+```
 
 
+Does not increase object lifetime (like `shared_ptr`)
 
-Does not increase object lifetime (like shared_ptr)
-
-Kinda replacement for weak_ptr in terms of object aliveness track.
+Alos, kinda replacement for `weak_ptr` in terms of object aliveness track. Dead elements have nullptr `trackable_ptr`'s.
 
 
 
 ### Overhead
  * 1 ptr for Trackable
- * 3 ptr for Tracker (TrackablePtr)
+ * 3 ptr for trackable_ptr (TrackablePtr)
 
  * O(n) complexity for moving/destroying Trackable. Where n = trackers count.

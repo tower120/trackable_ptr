@@ -1,45 +1,99 @@
 #include <iostream>
 #include <vector>
 
-#include "trackable_ptr2.h"
+#include "trackable_ptr.h"
 
 template<class T>
-using TrackablePtr = Tracker<T>;
+using TrackablePtr = trackable_ptr<T>;
 
 
-struct Data{
+struct IData{
     int x = 1;
 
-    Data(){}
-    Data(int x):x(x){}
+    IData(){}
+    IData(int x):x(x){}
 
-    virtual void show(){
+    virtual void show() = 0;
+};
+
+struct Data : IData{
+    using IData::IData;
+    virtual void show() override {
         std::cout << x << std::endl;
     }
 };
 
-void test(){
-    Trackable<Data> data(20);
+struct Data2 : IData{
+    using IData::IData;
+    virtual void show() override {
+        std::cout << "Data 2 " << x << std::endl;
+    }
+};
 
-    Trackable<Data> data_copy = data;
-    TrackablePtr<Data> p_data(data);
 
+void test_TrackerBase(){
+    struct IData : trackable_base{
+        int x = 1;
 
-    Trackable<Data> data2{std::move(data)};
-    data2.x = 2;
+        IData(){}
+        IData(int x):x(x){}
 
-    TrackablePtr<Data> p_data2{std::move(p_data)};
+        virtual void show() = 0;
+    };
 
-    TrackablePtr<Data> p_data3{p_data2};
-    // now p_data is null
-    std::cout << p_data2->x << std::endl;
-    std::cout << p_data3->x << std::endl;
-    p_data3.get()->show();
+    struct Data : IData{
+        using IData::IData;
+        virtual void show() override {
+            std::cout << x << std::endl;
+        }
+    };
+
+    struct Data2 : IData{
+        using IData::IData;
+        virtual void show() override {
+            std::cout << "Data 2 " << x << std::endl;
+        }
+    };
+
+    Data data(20);
+
+    trackable_ptr<IData> p_data(data);
+    p_data->show();
+
+    trackable_ptr<IData> p_data_moved(std::move(p_data));
+
+    p_data_moved = p_data;
 }
 
+
+void test_virtual(){
+    trackable<Data> data(20);
+
+    trackable_ptr<IData> p_data(data);
+    p_data->show();
+
+    trackable<Data2> data2(100);
+    p_data = {data2};
+    p_data->show();
+
+
+    p_data = {data};
+    std::cout << p_data.get() << std::endl;
+
+    Data data_moved{std::move(data)};
+    data.x = 40;
+
+    trackable<IData>* ptr =p_data.get();
+    std::cout <<  ptr<< std::endl;
+    p_data->show();
+}
+
+
 int main() {
-    // motivation example
-    std::vector< Trackable<Data> > list1;
+    test_TrackerBase();
+    test_virtual();
+    /*// motivation example
+    std::vector< trackable<Data> > list1;
 
     auto makeData = [&]() -> TrackablePtr<Data>{
         list1.emplace_back();
@@ -63,6 +117,6 @@ int main() {
 
     data->show();
 
-
+*/
     return 0;
 }

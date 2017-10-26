@@ -3,5 +3,6 @@ project(trackable_ptr)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES main.cpp trackable_ptr2.h trackable_ptr2.cpp)
-add_executable(trackable_ptr ${SOURCE_FILES})
+set(SOURCE_FILES trackable_ptr.h )
+add_executable(trackable_ptr ${SOURCE_FILES} main.cpp trackable_ptr_extensions.h)
+add_executable(vector_interaction ${SOURCE_FILES} vector_interaction.cpp)
