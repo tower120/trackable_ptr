@@ -30,7 +30,7 @@ std::cout << data->x;
 
 Does not increase object lifetime (like `shared_ptr`)
 
-Alos, kinda replacement for `weak_ptr` in terms of object aliveness track. Dead elements have nullptr `trackable_ptr`'s.
+Also, kinda replacement for `weak_ptr` in terms of object aliveness track. Dead elements have nullptr `trackable_ptr`'s.
 
 
 
