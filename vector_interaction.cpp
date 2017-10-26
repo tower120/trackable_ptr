@@ -5,10 +5,7 @@
 
 struct Data{
     int value;
-
-    Data(int value)
-        :value(value)
-    {}
+    Data(int value) :value(value) {}
 };
 
 int main() {
