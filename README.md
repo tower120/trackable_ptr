@@ -55,7 +55,7 @@ int main() {
     trackable<Data>& d1 = vec.emplace_back(1);
     trackable_ptr<Data> p_i1{d1};
 
-    trackable<Data>& d2 {vec.emplace_back(2)};
+    trackable_ptr<Data> p_i2{vec.emplace_back(2)};
 
     // erase
     vec.erase(get_iterator(vec, p_i1));
