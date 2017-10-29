@@ -183,6 +183,21 @@ public:
 };
 
 
+template<class T>
+class trackable_wrapper : public trackable_base{
+public:
+    T value;
+
+    trackable_wrapper(){}
+
+    template<class Arg, class ...Args, typename = std::enable_if_t<
+            !std::is_same_v<trackable_wrapper<T>&&, Arg >
+            && !std::is_same_v<const trackable_wrapper<T>&, Arg >
+    >>
+    trackable_wrapper(Args&&...args)
+        :value(std::forward<Args>(args)...)
+    {}
+};
 
 
 // ---------------------------------------------------------------------------------------

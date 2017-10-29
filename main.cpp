@@ -89,9 +89,24 @@ void test_virtual(){
 }
 
 
+void test_trackable_wrapper(){
+    trackable_wrapper<int> i;
+    i.value = 100;
+
+    trackable_ptr< trackable_wrapper<int> > p_i = {i};
+
+    auto i2 = std::move(i);
+
+    std::cout << p_i->value;
+}
+
+
 int main() {
-    test_TrackerBase();
-    test_virtual();
+    //test_TrackerBase();
+    //test_virtual();
+    test_trackable_wrapper();
+
+
     /*// motivation example
     std::vector< trackable<Data> > list1;
 
