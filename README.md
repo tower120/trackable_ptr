@@ -74,6 +74,17 @@ int main() {
 `get_iterator` / `get_index` allow you to get iterator / index from `trackable_ptr`. And in this way have "non-invalidatable iterators" for `std::vector`.
 
 
+#### trackable
+
+`trackable` is basically:
+
+```c++
+template<class T>
+struct trackable : trackable_base, T {}
+```
+
+So you can access `trackable<T>` the same way as `T`. And if you need exactly class T, you can just cast to it. This have some drawbacks... So if you have a better idea, fill an issue.
+
 
 #### Inheriting `trackable_base`
 
