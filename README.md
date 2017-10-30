@@ -97,6 +97,26 @@ std::vector<MyClass> vec;
 trackable_ptr<MyClass> first = {vec.emplace_back()};
 ```
 
+#### trackable_wrapper<T>
+
+`trackable_wrapper<T>` is a simple helper class:
+```c++
+template<class T>
+struct trackable_wrapper : trackable_base{
+    T value;
+}
+```
+Useful for cases when you can't inherit `T`, or don't want to use `trackable`. 
+ 
+Usage:
+```c++
+    trackable_wrapper<int> i;
+    i.value = 100;
+
+    trackable_ptr< trackable_wrapper<int> > p_i = {i};
+
+    std::cout << p_i->value;
+```
 
 
 ### Overhead
