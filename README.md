@@ -74,31 +74,19 @@ int main() {
 #### `trackable<T>`
 
 
-`trackable_ptr()` - construct object with default constructor, if possible.
-
-`trackable(Args&&... args)` - in-place construct object.
-
-`trackable(trackable&& other) noexcept` - move object, and update all `trackable_ptr`'s with new address. All `trackable_ptr`'s from `other` now point to this.
-
-`trackable(const trackable&)` - copy object, **does not** update `trackable_ptr`'s.
-
-`trackable& operator=(trackable&&) noexcept` - call destructor, then move constructor.
-
-`trackable& operator=(const trackable&)` - same as copy ctr.
-
-`T* get()` - return object pointer.
-
-`const T* get() const`
-
-`T* operator->()`
-
-`const T* operator->() const`
-
-`T& operator*()`
-
-`const T& operator*() const`
-
-`~trackable() noexcept` - update all `trackable_ptr`'s with new nullptr.
+ * `trackable_ptr()` - construct object with default constructor, if possible.
+ * `trackable(Args&&... args)` - in-place construct object.
+ * `trackable(trackable&& other) noexcept` - move object, and update all `trackable_ptr`'s with new address. All `trackable_ptr`'s from `other` now point to this.
+ * `trackable(const trackable&)` - copy object, **does not** update `trackable_ptr`'s.
+ * `trackable& operator=(trackable&&) noexcept` - call destructor, then move constructor.
+ * `trackable& operator=(const trackable&)` - same as copy ctr.
+ * `T* get()` - return object pointer.
+ * `const T* get() const`
+ * `T* operator->()`
+ * `const T* operator->() const`
+ * `T& operator*()`
+ * `const T& operator*() const`
+ * `~trackable() noexcept` - update all `trackable_ptr`'s with new nullptr.
 
 #### `unique_trackable<T>`
 
@@ -109,38 +97,23 @@ Usefull for use in containers. For example, it is not required for `std::vector`
 
 #### `trackable_ptr<T>`
 
-`trackable_ptr()` - construct with nullptr
-
-`trackable_ptr(trackable<T>*)` - add this to `trackable` trackers list.
-
-`trackable_ptr(trackable_ptr&& other)` - set other's pointer. Update trackers list with new address. other becomes nullptr.
-
-`trackable_ptr(const trackable_ptr& other)` - copy other pointer, and add this to `trackable` trackers list.
-
-`trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then copy ctr.
-`trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then move ctr.
-
-`bool alive() const` - true if not nullptr
-
-`operator bool() const` - return `alive()`
-
-`T* get_trackable()` - return pointer of trackable, that holds object.
-
-`const T* get_trackable() const`
-
-`T* get()` - return object pointer.
-
-`const T* get() const`
-
-`T* operator->()`
-
-`const T* operator->() const`
-
-`T& operator*()`
-
-`const T& operator*() const`
-
-`~trackable_ptr()` - exclude this from trackers list.
+ * `trackable_ptr()` - construct with nullptr
+ * `trackable_ptr(trackable<T>*)` - add this to `trackable` trackers list.
+ * `trackable_ptr(trackable_ptr&& other)` - set other's pointer. Update trackers list with new address. other becomes nullptr.
+ * `trackable_ptr(const trackable_ptr& other)` - copy other pointer, and add this to `trackable` trackers list.
+ * `trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then copy ctr.
+ * `trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then move ctr.
+ * `bool alive() const` - true if not nullptr
+ * `operator bool() const` - return `alive()`
+ * `T* get_trackable()` - return pointer of trackable, that holds object.
+ * `const T* get_trackable() const`
+ * `T* get()` - return object pointer.
+ * `const T* get() const`
+ * `T* operator->()`
+ * `const T* operator->() const`
+ * `T& operator*()`
+ * `const T& operator*() const`
+ * `~trackable_ptr()` - exclude this from trackers list.
 
 
 ### Overhead
