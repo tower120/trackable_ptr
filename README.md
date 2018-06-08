@@ -2,17 +2,16 @@
 
 Trackable pointer. When trackable object moved/destroyed, trackers updated with new object's pointer.
 
-[Live example](http://coliru.stacked-crooked.com/a/c6a2e71ea86f8902)
+Allow to have stable pointer on any movable object (in single-threaded environment). Objects may be stack allocated.
 
-Allow to have stable pointer on any movable object (in single-threaded environment).
-Like:
+[Live example](http://coliru.stacked-crooked.com/a/c6a2e71ea86f8902)
 
 ```c++
 struct Data{
     int x,y,z;
 };
 
-std::vector< trackable<Data> > list1;
+std::vector< unique_trackable<Data> > list1;
 
 list1.emplace_back();
 
@@ -29,9 +28,7 @@ std::cout << data->x;
 ```
 
 
-Does not increase object lifetime (like `shared_ptr`)
-
-Also, kinda replacement for `weak_ptr` in terms of object aliveness track. Dead elements have nullptr `trackable_ptr`'s.
+Dead elements have nullptr `trackable_ptr`'s.
 
 
 
@@ -71,56 +68,82 @@ int main() {
 }
 ```
 
-`get_iterator` / `get_index` allow you to get iterator / index from `trackable_ptr`. And in this way have "non-invalidatable iterators" for `std::vector`.
+`get_iterator` / `get_index` allow you to get iterator / index from `trackable_ptr`. And in this way have "non-invalidatable iterators" for `std::vector` compatible containers.
 
 
-#### trackable
-
-`trackable` is basically:
-
-```c++
-template<class T>
-struct trackable : trackable_base, T {}
-```
-
-So you can access `trackable<T>` the same way as `T`. And if you need exactly class T, you can just cast to it. This have some drawbacks... So if you have a better idea, fill an issue.
+#### `trackable<T>`
 
 
-#### Inheriting `trackable_base`
+`trackable_ptr()` - construct object with default constructor, if possible.
 
-Instead of wrapping your class with `trackable`, like `trackable<MyClass>`; you may inerit `trackable_base`, instead:
+`trackable(Args&&... args)` - in-place construct object.
 
-```c++
-struct MyClass : trackable_base{}
+`trackable(trackable&& other) noexcept` - move object, and update all `trackable_ptr`'s with new address. All `trackable_ptr`'s from `other` now point to this.
 
-std::vector<MyClass> vec;
-trackable_ptr<MyClass> first = {vec.emplace_back()};
-```
+`trackable(const trackable&)` - copy object, **does not** update `trackable_ptr`'s.
 
-#### trackable_wrapper<T>
+`trackable& operator=(trackable&&) noexcept` - call destructor, then move constructor.
 
-`trackable_wrapper<T>` is a simple helper class:
-```c++
-template<class T>
-struct trackable_wrapper : trackable_base{
-    T value;
-}
-```
-Useful for cases when you can't inherit `T`, or don't want to use `trackable`. 
- 
-Usage:
-```c++
-    trackable_wrapper<int> i;
-    i.value = 100;
+`trackable& operator=(const trackable&)` - same as copy ctr.
 
-    trackable_ptr< trackable_wrapper<int> > p_i = {i};
+`T* get()` - return object pointer.
 
-    std::cout << p_i->value;
-```
+`const T* get() const`
+
+`T* operator->()`
+
+`const T* operator->() const`
+
+`T& operator*()`
+
+`const T& operator*() const`
+
+`~trackable() noexcept` - update all `trackable_ptr`'s with new nullptr.
+
+#### `unique_trackable<T>`
+
+Same as `trackable`, but move-only.
+
+Usefull for use in containers. For example, it is not required for `std::vector` implementation to use move instead copy, when both copy and move constructor are available. Though all tested implementations currently prefer move, whenever possible.
+
+
+#### `trackable_ptr<T>`
+
+`trackable_ptr()` - construct with nullptr
+
+`trackable_ptr(trackable<T>*)` - add this to `trackable` trackers list.
+
+`trackable_ptr(trackable_ptr&& other)` - set other's pointer. Update trackers list with new address. other becomes nullptr.
+
+`trackable_ptr(const trackable_ptr& other)` - copy other pointer, and add this to `trackable` trackers list.
+
+`trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then copy ctr.
+`trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then move ctr.
+
+`bool alive() const` - true if not nullptr
+
+`operator bool() const` - return `alive()`
+
+`T* get_trackable()` - return pointer of trackable, that holds object.
+
+`const T* get_trackable() const`
+
+`T* get()` - return object pointer.
+
+`const T* get() const`
+
+`T* operator->()`
+
+`const T* operator->() const`
+
+`T& operator*()`
+
+`const T& operator*() const`
+
+`~trackable_ptr()` - exclude this from trackers list.
 
 
 ### Overhead
  * 1 ptr for `trackable`
  * 3 ptr for `trackable_ptr`
-
  * O(n) complexity for moving/destroying `trackable`. Where n = `tracker_ptr`s per  `trackable` .

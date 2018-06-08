@@ -1,266 +1,240 @@
-#ifndef TRACKABLE_PTR_TRACKABLE_PTR_H
-#define TRACKABLE_PTR_TRACKABLE_PTR_H
+#pragma once
 
-#include <type_traits>
-#include <utility>
+#include <cassert>
 
-template<class>
-class trackable;
+namespace tower120::utils{
 
-class trackable_base;
+    template<class>
+    class trackable_ptr;
 
-class TrackerBase{
-    friend trackable_base;
-protected:
-    void move_ctr(TrackerBase&& other) noexcept;
-    void register_tracker(trackable_base* trackable) noexcept;
+    template<class T>
+    class trackable{
+        friend trackable_ptr<T>;
 
-    TrackerBase* next = nullptr;
-    TrackerBase* prev = nullptr;
-    trackable_base* m_trackable = nullptr;
+        T value;
+        trackable_ptr<T>* first_ptr = nullptr;
 
-    TrackerBase() noexcept {}
-    TrackerBase(trackable_base* trackable) noexcept {
-        register_tracker(trackable);
-    }
-    TrackerBase(TrackerBase&& other) noexcept {
-        move_ctr(std::move(other));
-    }
-    TrackerBase(const TrackerBase& other) noexcept
-        :TrackerBase(other.m_trackable)
-    {}
-
-    ~TrackerBase() noexcept;
-};
-
-template<class T>
-class trackable_ptr : TrackerBase{
-public:
-    // T or derived from T
-    template<class R , typename = std::enable_if_t<
-            std::is_same_v<R, T>
-            || std::is_base_of_v<T, R>
-    >>
-    trackable_ptr(trackable<R>& trackable) noexcept
-        :TrackerBase(&trackable)
-    {}
-
-    // T or derived from T, inherited from TrackableBase
-    template<class R, typename = std::enable_if_t<
-            (std::is_same_v<R, T> || std::is_base_of_v<T, R>)
-            && std::is_base_of_v<trackable_base, R>
-    >>
-    trackable_ptr(R& trackable) noexcept
-        :TrackerBase(&trackable)
-    {}
-
-    trackable_ptr(trackable_ptr&& other) noexcept
-        :TrackerBase(std::move(other))
-    {}
-    trackable_ptr& operator=(trackable_ptr&& other) noexcept {
-        if (this==&other) return *this;
-
-        this->~trackable_ptr();
-        move_ctr(std::move(other));
-
-        return *this;
-    }
-
-    trackable_ptr(const trackable_ptr& other) noexcept
-        :TrackerBase(other)
-    {}
-
-    trackable_ptr& operator=(const trackable_ptr& other) noexcept {
-        if (this==&other) return *this;
-
-        this->~trackable_ptr();
-        register_tracker(other.m_trackable);
-
-        return *this;
-    }
-
-    using element_type = std::conditional_t< std::is_base_of_v<trackable_base, T>,
-        T,
-        trackable<T>
-    >;
-
-    element_type* get() const noexcept {
-        if constexpr (std::is_base_of_v<trackable_base, T>){
-            return static_cast<T*>(m_trackable);
-        } else {
-            return static_cast<trackable<T>*>(m_trackable);
+        template<class Closure>
+        void foreach_ptr(Closure&& closure){
+            trackable_ptr<T>* ptr = first_ptr;
+            while(ptr){
+                closure(*ptr);
+                ptr = ptr->next;
+            }
         }
-    }
 
+        void move_ctr(trackable& other) noexcept {
+            // update trackers with new pointer
+            first_ptr       = other.first_ptr;
+            other.first_ptr = nullptr;
 
-    explicit operator bool() const noexcept {
-        return m_trackable != nullptr;
-    }
-
-    element_type* operator->()  const noexcept {
-        return get();
-    }
-
-    element_type& operator*()  const noexcept {
-        return *get();
-    }
-};
-
-
-class trackable_base{
-    friend TrackerBase;
-
-    void move_ctr(trackable_base&& other){
-        // update trackers with new pointer
-        tracker_first       = other.tracker_first;
-        other.tracker_first = nullptr;
-
-        TrackerBase* tracker = tracker_first;
-        while(tracker){
-            tracker->m_trackable = this;
-            tracker = tracker->next;
+            foreach_ptr([&](trackable_ptr<T>& ptr){
+                ptr.obj = this;
+            });
         }
-    }
 
-    TrackerBase* tracker_first = nullptr;
-public:
-    trackable_base()noexcept{}
-    trackable_base(trackable_base&& other) noexcept
-    {
-        move_ctr(std::move(other));
-    }
+    public:
+        trackable(const trackable& other) noexcept
+            : value(other.value)
+        {}
 
-    trackable_base& operator=(trackable_base&& other) noexcept {
-        if (this == &other) return *this;
-
-        this->~trackable_base();
-        move_ctr(std::move(other));
-
-        return *this;
-    }
-
-    trackable_base(const trackable_base& other) noexcept {
-        // do nothing
-    }
-
-    trackable_base& operator=(const trackable_base& other) noexcept {
-        if (this == &other) return *this;
-
-        this->~trackable_base();
-
-        return *this;
-    }
-
-    ~trackable_base() noexcept{
-        TrackerBase* tracker = tracker_first;
-        while(tracker){
-            tracker->m_trackable = nullptr;
-            tracker = tracker->next;
+        trackable& operator=(const trackable& other) noexcept {
+            value = other.value;
+            return *this;
         }
-    }
-};
-
-template<class T>
-class trackable : public trackable_base, public T{
-public:
-    trackable(){}
-
-    // first call TrackableBase, then T
-    trackable(trackable&&) = default;
-    trackable(const trackable&) = default;
-    trackable& operator=(trackable&&) = default;
-    trackable& operator=(const trackable&) = default;
 
 
-    template<class Arg, class ...Args, typename = std::enable_if_t<
-            !std::is_same_v<trackable<T>&&, Arg >
-            && !std::is_same_v<const trackable<T>&, Arg >
-    >>
-    trackable(Arg&& arg, Args&&...args)
-        : trackable_base()
-        , T(std::forward<Arg>(arg), std::forward<Args>(args)...)
-    {}
-};
+        trackable(trackable&& other) noexcept
+            : value(std::move(other.value))
+        {
+            move_ctr(other);
+        }
+
+        trackable& operator=(trackable&& other) noexcept {
+            if (this == &other) return *this;
+
+            this->~trackable();
+            value = std::move(other.value);
+            move_ctr(other);
+
+            return *this;
+        }
 
 
-template<class T>
-class trackable_wrapper : public trackable_base{
-public:
-    T value;
 
-    trackable_wrapper(){}
+        trackable() noexcept {}
 
-    template<class Arg, class ...Args, typename = std::enable_if_t<
-            !std::is_same_v<trackable_wrapper<T>&&, Arg >
-            && !std::is_same_v<const trackable_wrapper<T>&, Arg >
-    >>
-    trackable_wrapper(Args&&...args)
-        :value(std::forward<Args>(args)...)
-    {}
-};
+        template<class Arg, class ...Args,
+                typename = std::enable_if_t<
+                        !std::is_same_v<trackable<T>&&, Arg >
+                >
+        >
+        trackable(Arg&& arg, Args&&...args) noexcept
+             : value(std::forward<Arg>(arg), std::forward<Args>(args)...)
+        {}
 
 
-// ---------------------------------------------------------------------------------------
-// .cpp part here (just to have single header)
+        using type = T;
 
-void TrackerBase::register_tracker(trackable_base* trackable) noexcept {
-    if (!trackable) return;
+        T* get() noexcept {
+            return &value;
+        }
+        const T* get() const noexcept{
+            return &value;
+        }
 
-    this->m_trackable = trackable;
+        T& operator*(){
+            return value;
+        }
+        const T& operator*() const{
+            return value;
+        }
 
-    TrackerBase* prev_first  = trackable->tracker_first;
-    trackable->tracker_first = this;
+        T* operator->() noexcept {
+            return &value;
+        }
+        const T* operator->() const noexcept{
+            return &value;
+        }
 
-    if (prev_first) prev_first->prev = this;
-    this->next = prev_first;
+        ~trackable() noexcept{
+            foreach_ptr([](trackable_ptr<T>& ptr){
+                ptr.obj = nullptr;
+            });
+        }
+    };
+
+
+    template<class T>
+    class unique_trackable : public trackable<T> {
+    public:
+        using trackable<T>::trackable;
+
+        unique_trackable(unique_trackable&&) = default;
+
+        unique_trackable(const unique_trackable&) = delete;
+        unique_trackable& operator=(const unique_trackable&) = delete;
+    };
+
+
+
+    template<class T>
+    class trackable_ptr{
+        friend trackable<T>;
+
+        trackable<T>* obj;
+
+        trackable_ptr* prev;
+        trackable_ptr* next;
+
+        void init(trackable<T>* obj) noexcept {
+            this->obj = obj;
+            if (!obj) return;
+
+            auto& first_ptr = this->obj->first_ptr;
+
+            this->prev = nullptr;
+            this->next = first_ptr;
+
+            if (first_ptr) first_ptr->prev = this;
+            first_ptr = this;
+        }
+
+        void move_ctr(trackable_ptr&& other) noexcept{
+            obj = other.obj;
+            if(!obj) return;
+            other.obj = nullptr;
+
+            prev = other.prev;
+            next = other.next;
+
+            if (prev) {
+                prev->next = this;
+            } else{
+                assert(obj->first_ptr == &other);
+                obj->first_ptr = this;
+            }
+
+            if (next) next->prev = this;
+        }
+    public:
+        trackable_ptr() noexcept : obj(nullptr) {}
+        trackable_ptr(trackable<T>* obj) noexcept
+        {
+            init(obj);
+        }
+
+        trackable_ptr(trackable_ptr&& other) noexcept {
+            move_ctr(std::move(other));
+        }
+
+        trackable_ptr& operator=(trackable_ptr&& other) noexcept {
+            this->~trackable_ptr();
+            move_ctr(std::move(other));
+            return *this;
+        }
+
+
+        trackable_ptr(const trackable_ptr& other) noexcept
+        {
+            init(other.obj);
+        }
+
+        trackable_ptr& operator=(const trackable_ptr& other) noexcept {
+            this->~trackable_ptr();
+            init(other.obj);
+            return *this;
+        }
+
+        bool alive() const noexcept {
+            return obj != nullptr;
+        }
+
+        operator bool() const noexcept{
+            return alive();
+        }
+
+        trackable<T>* get_trackable() noexcept {
+            return obj;
+        }
+        const trackable<T>* get_trackable() const noexcept {
+            return obj;
+        }
+
+        T* get() noexcept {
+            return obj->get();
+        }
+        const T* get() const noexcept{
+            return obj->get();
+        }
+
+        T* operator->() noexcept {
+            return get();
+        }
+        const T* operator->() const noexcept {
+            return get();
+        }
+
+        T& operator*(){
+            return *get();
+        }
+        const T& operator*() const{
+            return *get();
+        }
+
+
+        ~trackable_ptr() noexcept {
+            if(!obj) return;
+
+            if (prev) {
+                prev->next = next;
+            } else {
+                assert(obj->first_ptr == this);
+                obj->first_ptr = next;
+            }
+
+            if (next) next->prev = prev;
+        }
+    };
+
 }
-
-TrackerBase::~TrackerBase() noexcept {
-    if(!m_trackable) return;
-
-    if (!prev && !next) {
-        // last
-        m_trackable->tracker_first = nullptr;
-        return;
-    }
-    else if (!prev){
-        // first
-        next->prev = nullptr;
-        m_trackable->tracker_first = next;
-    }
-    else if (!next){
-        // last
-        prev->next = nullptr;
-    }
-    else {
-        // in the middle
-        prev->next = next;
-        next->prev = prev;
-    }
-
-    m_trackable = nullptr;
-}
-
-void TrackerBase::move_ctr(TrackerBase &&other) noexcept {
-    next = other.next;
-    prev = other.prev;
-
-    m_trackable = other.m_trackable;
-
-    other.m_trackable = nullptr;
-
-    if (prev){
-        prev->next = this;
-    }
-
-    if (next){
-        next->prev = this;
-    }
-
-    if (m_trackable->tracker_first == &other){
-        m_trackable->tracker_first = this;
-    }
-}
-
-
-#endif //TRACKABLE_PTR_TRACKABLE_PTR_H

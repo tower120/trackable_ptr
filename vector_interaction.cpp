@@ -9,17 +9,19 @@ struct Data{
 };
 
 int main() {
+    using namespace tower120::utils;
+
     std::vector<trackable<Data>> vec;
 
     trackable<Data>& d1 = vec.emplace_back(1);
-    trackable_ptr<Data> p_i1{d1};
+    trackable_ptr<Data> p_i1{&d1};
 
     trackable<Data>& d2 = vec.emplace_back(2);
-    trackable_ptr<Data> p_i2{d2};
+    trackable_ptr<Data> p_i2{&d2};
 
     vec.erase(get_iterator(vec, p_i1));
 
-    trackable_ptr<Data> p_i3 = *vec.insert(get_iterator(vec, p_i2), 3);
+    trackable_ptr<Data> p_i3 = &*vec.insert(get_iterator(vec, p_i2), 3);
 
     std::cout << "dead " << !p_i1 << std::endl;
     std::cout << p_i2->value << std::endl;

@@ -4,14 +4,19 @@
 #include <vector>
 #include "trackable_ptr.h"
 
-template<class T, class R, class ...VecAdditionals>
-static std::size_t get_index(const std::vector<T, VecAdditionals...>& vec, const trackable_ptr<R>& ptr){
-    return ptr.get() - vec.data();
-}
 
-template<class T, class R, class ...VecAdditionals>
-static auto get_iterator(const std::vector<T, VecAdditionals...>& vec, const trackable_ptr<R>& ptr){
-    return vec.begin() + get_index(vec, ptr);
+namespace tower120::utils {
+
+    template<class T, class Container>
+    static std::size_t get_index(const Container &container, const trackable_ptr<T> &ptr) {
+        return ptr.get_trackable() - container.data();
+    }
+
+    template<class T, class Container>
+    static auto get_iterator(const Container &container, const trackable_ptr<T> &ptr) {
+        return container.begin() + get_index(container, ptr);
+    }
+
 }
 
 
