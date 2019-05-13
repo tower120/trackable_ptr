@@ -10,11 +10,11 @@ compiler:
   - gcc
   - clang
 
-env:
-  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
-  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
-  - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
-  - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+#env:
+#  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+#  - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
+#  - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+#  - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
 
 #install:
 #  - source ci/travis/install-$TRAVIS_OS_NAME.sh
@@ -25,3 +25,6 @@ script:
   - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DTARGET_CPU=$TARGET_CPU
   - cmake --build .
   - ctest --output-on-failure
+
+notifications:
+  email: false
