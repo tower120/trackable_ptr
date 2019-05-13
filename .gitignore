@@ -7,8 +7,7 @@ CMakeCache.txt
 ## Clion
 #################
 .idea
-cmake-build-debug
-cmake-build-release
+cmake-build-*
 
 #################
 ## Visual Studio

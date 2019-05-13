@@ -3,6 +3,7 @@ project(trackable_ptr)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 function(_add_test TESTNAME FIRSTSOURCE)
   add_executable(${TESTNAME} ${FIRSTSOURCE} ${ARGN})
