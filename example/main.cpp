@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
 
-#include "../include/tower120/trackable_ptr.h"
+#include <tower120/trackable_ptr.h>
 
 struct Data{
     int x,y;
 };
 
 int main() {
-    using namespace tower120::utils;
+    using namespace tower120;
 
     std::vector< unique_trackable<Data> > vec;
     trackable_ptr<Data> ptr1 = &vec.emplace_back(Data{10,20});

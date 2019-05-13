@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace tower120::utils{
+namespace tower120{
 
     template<class>
     class trackable_ptr;
@@ -15,12 +15,20 @@ namespace tower120::utils{
         trackable_ptr<T>* first_ptr = nullptr;
 
         template<class Closure>
-        void foreach_ptr(Closure&& closure){
+        static void foreach_ptr(Closure&& closure, trackable_ptr<T>* first_ptr){
             trackable_ptr<T>* ptr = first_ptr;
             while(ptr){
                 closure(*ptr);
                 ptr = ptr->next;
             }
+        }
+        template<class Closure>
+        void foreach_ptr(Closure&& closure){
+            foreach_ptr(std::forward<Closure>(closure), first_ptr);
+        }
+        template<class Closure>
+        void foreach_ptr(Closure&& closure) const {
+            foreach_ptr(std::forward<Closure>(closure), first_ptr);
         }
 
         void move_ctr(trackable& other) noexcept {
@@ -34,6 +42,19 @@ namespace tower120::utils{
         }
 
     public:
+        trackable() = default;
+
+        explicit trackable(T&& value) noexcept
+            : value(std::move(value))
+        {}
+
+        template<class Arg, class ...Args,
+            typename = std::enable_if_t<
+                !std::is_same<trackable<T>&&, Arg >::value>>
+        explicit trackable(Arg&& arg, Args&&...args) noexcept
+            : value(std::forward<Arg>(arg), std::forward<Args>(args)...)
+        {}
+
         trackable(const trackable& other) noexcept
             : value(other.value)
         {}
@@ -42,7 +63,6 @@ namespace tower120::utils{
             value = other.value;
             return *this;
         }
-
 
         trackable(trackable&& other) noexcept
             : value(std::move(other.value))
@@ -60,19 +80,16 @@ namespace tower120::utils{
             return *this;
         }
 
+        // TODO: conditional noexcept
+        // TODO: SWAP AND COPY
 
-
-        trackable() noexcept {}
-
-        template<class Arg, class ...Args,
-                typename = std::enable_if_t<
-                        !std::is_same_v<trackable<T>&&, Arg >
-                >
-        >
-        trackable(Arg&& arg, Args&&...args) noexcept
-             : value(std::forward<Arg>(arg), std::forward<Args>(args)...)
-        {}
-
+        std::size_t use_count() const noexcept {
+            std::size_t count = 0;
+            foreach_ptr([&](const trackable_ptr<T>&){
+                count++;
+            });
+            return count;
+        }
 
         using type = T;
 
@@ -110,7 +127,8 @@ namespace tower120::utils{
     public:
         using trackable<T>::trackable;
 
-        unique_trackable(unique_trackable&&) = default;
+        unique_trackable(unique_trackable&&) noexcept = default;
+        unique_trackable& operator=(unique_trackable&&) noexcept = default;
 
         unique_trackable(const unique_trackable&) = delete;
         unique_trackable& operator=(const unique_trackable&) = delete;
@@ -159,7 +177,7 @@ namespace tower120::utils{
         }
     public:
         trackable_ptr() noexcept : obj(nullptr) {}
-        trackable_ptr(trackable<T>* obj) noexcept
+        explicit trackable_ptr(trackable<T>* obj) noexcept
         {
             init(obj);
         }
@@ -186,12 +204,8 @@ namespace tower120::utils{
             return *this;
         }
 
-        bool alive() const noexcept {
+        explicit operator bool() const noexcept {
             return obj != nullptr;
-        }
-
-        operator bool() const noexcept{
-            return alive();
         }
 
         trackable<T>* get_trackable() noexcept {
@@ -215,13 +229,14 @@ namespace tower120::utils{
             return get();
         }
 
-        T& operator*(){
+        T& operator*() noexcept {
             return *get();
         }
-        const T& operator*() const{
+        const T& operator*() const noexcept {
             return *get();
         }
 
+        // TODO: comparison operators
 
         ~trackable_ptr() noexcept {
             if(!obj) return;

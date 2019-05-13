@@ -5,7 +5,7 @@
 #include "trackable_ptr.h"
 
 
-namespace tower120::utils {
+namespace tower120 {
 
     template<class T, class Container>
     static std::size_t get_index(const Container &container, const trackable_ptr<T> &ptr) {
