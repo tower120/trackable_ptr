@@ -30,18 +30,10 @@ matrix:
 #install:
 #  - source ci/travis/install-$TRAVIS_OS_NAME.sh
 
-
-install:
-  if [ "$SAN" == "ASAN" ]; then
-    CXX_FLAGS="${CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
-  elif [ "$SAN" == "MSAN" ]; then
-    CXX_FLAGS="${CXX_FLAGS} -fsanitize=memory"
-  fi
-
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DSAN=$SAN
   - cmake --build .
   - ctest -V
 

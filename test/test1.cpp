@@ -8,3 +8,10 @@ int main(){
       return array[1];  // BOOM
     return 0;
 }
+
+/*
+int global_array[100] = {-1};
+
+int main(int argc, char **) {
+    return global_array[argc + 100];  // global buffer overflow
+}*/
