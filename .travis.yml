@@ -14,18 +14,18 @@ ASAN: "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=intege
 MSAN: "-fsanitize=memory"
 
 env:
-  - BUILD_CONFIGURATION=Debug SAN=ASAN
-  - BUILD_CONFIGURATION=Debug SAN=MSAN
+  - BUILD_CONFIGURATION=Debug SAN=$ASAN
+  - BUILD_CONFIGURATION=Debug SAN=$MSAN
   - BUILD_CONFIGURATION=Release
 
 matrix:
   exclude:
   - os: "osx"
-    env: SAN=ASAN
+    env: SAN=$ASAN
   - os: "osx"
     env: SAN=MSAN
   - compiler: "gcc"
-    env: SAN=MSAN
+    env: SAN=$MSAN
 
 #install:
 #  - source ci/travis/install-$TRAVIS_OS_NAME.sh
