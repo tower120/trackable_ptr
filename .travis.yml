@@ -14,7 +14,7 @@ ASAN: "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=intege
 MSAN: "-fsanitize=memory"
 
 env:
-  - BUILD_CONFIGURATION=Debug SAN=$ASAN
+  - BUILD_CONFIGURATION=Debug SAN="-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
   - BUILD_CONFIGURATION=Debug SAN=$MSAN
   - BUILD_CONFIGURATION=Release
 
@@ -33,7 +33,7 @@ matrix:
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_CXX_FLAGS=$ASAN
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_CXX_FLAGS=$SAN
   - cmake --build .
   - ctest -V
 
