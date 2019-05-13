@@ -3,5 +3,5 @@
 
 int main(){
     std::cout << "test1 strart msg" << std::endl;
-    return -1;
+    return 1;
 }
