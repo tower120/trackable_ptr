@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
 
-#include "trackable_ptr.h"
+#include "../include/tower120/trackable_ptr.h"
 
 struct Data{
     int x,y;
 };
-
 
 int main() {
     using namespace tower120::utils;
@@ -21,7 +20,6 @@ int main() {
     for(auto& data : vec){
         std::cout << data->x << " : " << data->y << std::endl;
     }
-
 
     auto ptr = std::move(ptr1);
 
