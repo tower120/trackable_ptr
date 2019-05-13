@@ -10,30 +10,38 @@ compiler:
   - gcc
   - clang
 
-ASAN: "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
-MSAN: "-fsanitize=memory"
+#ASAN: "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
+#MSAN: "-fsanitize=memory"
 
 env:
-  - BUILD_CONFIGURATION=Debug SAN="-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
-  - BUILD_CONFIGURATION=Debug SAN=$MSAN
+  - BUILD_CONFIGURATION=Debug SAN=ASAN
+  - BUILD_CONFIGURATION=Debug SAN=MSAN
   - BUILD_CONFIGURATION=Release
 
 matrix:
   exclude:
   - os: "osx"
-    env: SAN=$ASAN
+    env: SAN=ASAN
   - os: "osx"
-    env: SAN=$MSAN
+    env: SAN=MSAN
   - compiler: "gcc"
-    env: SAN=$MSAN
+    env: SAN=MSAN
 
 #install:
 #  - source ci/travis/install-$TRAVIS_OS_NAME.sh
 
+
+install:
+  if [ "$SAN" == "ASAN" ]; then
+    CXX_FLAGS="${CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
+  elif [ "$SAN" == "MSAN" ]; then
+    CXX_FLAGS="${CXX_FLAGS} -fsanitize=memory"
+  fi
+
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_CXX_FLAGS="$SAN"
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
   - cmake --build .
   - ctest -V
 
