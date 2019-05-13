@@ -10,8 +10,8 @@ compiler:
   - gcc
   - clang
 
-ASAN="-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
-MSAN="-fsanitize=memory"
+ASAN: "-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
+MSAN: "-fsanitize=memory"
 
 env:
   - BUILD_CONFIGURATION=Debug SAN=ASAN
