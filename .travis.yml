@@ -23,7 +23,7 @@ matrix:
   - os: "osx"
     env: SAN=$ASAN
   - os: "osx"
-    env: SAN=MSAN
+    env: SAN=$MSAN
   - compiler: "gcc"
     env: SAN=$MSAN
 
