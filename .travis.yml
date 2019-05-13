@@ -10,9 +10,22 @@ compiler:
   - gcc
   - clang
 
+ASAN="-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
+MSAN="-fsanitize=memory"
+
 env:
-  - BUILD_CONFIGURATION=Debug
+  - BUILD_CONFIGURATION=Debug SAN=ASAN
+  - BUILD_CONFIGURATION=Debug SAN=MSAN
   - BUILD_CONFIGURATION=Release
+
+matrix:
+  exclude:
+  - os: "osx"
+    env: SAN=ASAN
+  - os: "osx"
+    env: SAN=MSAN
+  - compiler: "gcc"
+    env: SAN=MSAN
 
 #install:
 #  - source ci/travis/install-$TRAVIS_OS_NAME.sh
@@ -20,7 +33,7 @@ env:
 script:
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -g"
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_CXX_FLAGS="$SAN"
   - cmake --build .
   - ctest -V
 
