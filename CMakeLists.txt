@@ -14,6 +14,11 @@ endfunction(_add_test)
 include_directories(include)
 
 
+#option(BUILD_TESTING "" OFF)
+
+enable_testing()
+#include(CTest)
+
 
 #add_subdirectory(exmpale)
 add_subdirectory(test)
