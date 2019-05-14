@@ -7,8 +7,9 @@ namespace tower120{
     template<class>
     class trackable_ptr;
 
+
     template<class T>
-    class trackable{
+    class trackable {
         friend trackable_ptr<T>;
 
         T value;
@@ -100,10 +101,10 @@ namespace tower120{
             return &value;
         }
 
-        T& operator*(){
+        T& operator*() noexcept{
             return value;
         }
-        const T& operator*() const{
+        const T& operator*() const noexcept{
             return value;
         }
 
@@ -114,7 +115,7 @@ namespace tower120{
             return &value;
         }
 
-        ~trackable() noexcept{
+        ~trackable() noexcept {
             foreach_ptr([](trackable_ptr<T>& ptr){
                 ptr.obj = nullptr;
             });
@@ -236,7 +237,7 @@ namespace tower120{
         }
 
         explicit operator bool() const noexcept {
-            return obj != nullptr;
+            return get() != nullptr;
         }
 
         bool operator==(const trackable_ptr& other) const noexcept {
