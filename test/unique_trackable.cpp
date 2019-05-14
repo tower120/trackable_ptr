@@ -7,6 +7,8 @@
 
 using namespace tower120;
 
+// trackable move - transfer all it's trackable_ptr's
+
 void move_ctr_test(){
     unique_trackable<test_struct> d2{{2}};
     trackable_ptr<test_struct> p2 {&d2};
@@ -14,11 +16,13 @@ void move_ctr_test(){
 
     unique_trackable<test_struct> d1{std::move(d2)};
     trackable_ptr<test_struct> p1 {&d1};
-    REQUIRE(p1 == p2);
+    REQUIRE(p1->i == 2);
     REQUIRE(p2->i == 2);
 
-    REQUIRE(d1.use_count() == 2);
-    REQUIRE(d2.use_count() == 0);
+    REQUIRE(p1 == p2);
+
+    REQUIRE(d1.ptrs_count() == 2);
+    REQUIRE(d2.ptrs_count() == 0);
 }
 
 void move_test(){
@@ -33,8 +37,8 @@ void move_test(){
     REQUIRE(!p1);
     REQUIRE(p2->i == 2);
 
-    REQUIRE(d1.use_count() == 1);
-    REQUIRE(d2.use_count() == 0);
+    REQUIRE(d1.ptrs_count() == 1);
+    REQUIRE(d2.ptrs_count() == 0);
 }
 
 void death_test(){

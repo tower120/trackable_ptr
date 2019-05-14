@@ -50,7 +50,8 @@ namespace tower120{
 
         template<class Arg, class ...Args,
             typename = std::enable_if_t<
-                !std::is_same<trackable<T>&&, Arg >::value>>
+                sizeof...(Args) == 0 &&
+                !std::is_same<trackable<T>, std::decay_t<Arg> >::value>>
         explicit trackable(Arg&& arg, Args&&...args) noexcept
             : value(std::forward<Arg>(arg), std::forward<Args>(args)...)
         {}
@@ -81,9 +82,8 @@ namespace tower120{
         }
 
         // TODO: conditional noexcept
-        // TODO: SWAP AND COPY
 
-        std::size_t use_count() const noexcept {
+        std::size_t ptrs_count() const noexcept {
             std::size_t count = 0;
             foreach_ptr([&](const trackable_ptr<T>&){
                 count++;
@@ -181,7 +181,17 @@ namespace tower120{
         {
             init(obj);
         }
+        trackable_ptr& operator=(trackable<T>* obj) noexcept
+        {
+            this->~trackable_ptr();
+            init(obj);
+            return *this;
+        }
 
+        trackable_ptr(const trackable_ptr& other) noexcept
+        {
+            init(other.obj);
+        }
         trackable_ptr(trackable_ptr&& other) noexcept {
             move_ctr(std::move(other));
         }
@@ -191,21 +201,10 @@ namespace tower120{
             move_ctr(std::move(other));
             return *this;
         }
-
-
-        trackable_ptr(const trackable_ptr& other) noexcept
-        {
-            init(other.obj);
-        }
-
         trackable_ptr& operator=(const trackable_ptr& other) noexcept {
             this->~trackable_ptr();
             init(other.obj);
             return *this;
-        }
-
-        explicit operator bool() const noexcept {
-            return obj != nullptr;
         }
 
         trackable<T>* get_trackable() noexcept {
@@ -236,7 +235,16 @@ namespace tower120{
             return *get();
         }
 
-        // TODO: comparison operators
+        explicit operator bool() const noexcept {
+            return obj != nullptr;
+        }
+
+        bool operator==(const trackable_ptr& other) const noexcept {
+            return get() == other.get();
+        }
+        bool operator!=(const trackable_ptr& other) const noexcept {
+            return get() != other.get();
+        }
 
         ~trackable_ptr() noexcept {
             if(!obj) return;
