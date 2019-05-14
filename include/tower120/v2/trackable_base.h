@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tower120::v2{
+namespace tower120{ namespace v2{
 
     namespace detail{
         class trackable_ptr_base;
@@ -42,6 +42,14 @@ namespace tower120::v2{
         }
     public:
 
+        friend std::size_t ptrs_count(const trackable_base& self) noexcept {
+            std::size_t count = 0;
+            self.foreach_ptr([&](detail::trackable_ptr_base*){
+                count++;
+            });
+            return count;
+        }
+
         trackable_base() = default;
 
         trackable_base(const trackable_base&) noexcept {}
@@ -68,4 +76,4 @@ namespace tower120::v2{
 
     };
 
-}
+}}

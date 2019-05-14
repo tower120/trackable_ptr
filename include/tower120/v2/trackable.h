@@ -2,7 +2,7 @@
 
 #include "trackable_base.h"
 
-namespace tower120::v2{
+namespace tower120{ namespace v2{
 
     namespace detail{
         struct trackable_tag{};
@@ -10,6 +10,8 @@ namespace tower120::v2{
 
     template<class T>
     class trackable : public trackable_base, detail::trackable_tag{
+        /*static_assert(!std::is_base_of_v<T, trackable_base>,
+            "Your type already inherit trackable_base. You don't need wrap it with trackable.");*/
         T value;
     public:
         trackable() = default;
@@ -64,4 +66,4 @@ namespace tower120::v2{
         unique_trackable& operator=(const unique_trackable&) = delete;
     };
 
-}
+}}

@@ -22,8 +22,8 @@ void move_ctr_test(){
 
     REQUIRE(p1 == p2);
 
-    /*REQUIRE(d1.ptrs_count() == 2);
-    REQUIRE(d2.ptrs_count() == 0);*/
+    REQUIRE(ptrs_count(d1) == 2);
+    REQUIRE(ptrs_count(d2) == 0);
 }
 
 void move_test(){
@@ -38,8 +38,8 @@ void move_test(){
     REQUIRE(!p1);
     REQUIRE(p2->i == 2);
 
-    /*REQUIRE(d1.ptrs_count() == 1);
-    REQUIRE(d2.ptrs_count() == 0);*/
+    REQUIRE(ptrs_count(d1) == 1);
+    REQUIRE(ptrs_count(d2) == 0);
 }
 
 void death_test(){

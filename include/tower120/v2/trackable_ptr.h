@@ -3,7 +3,7 @@
 #include <cassert>
 #include "trackable_base.h"
 
-namespace tower120::v2{
+namespace tower120{ namespace v2{
     namespace detail{
 
         class trackable_ptr_base {
@@ -98,13 +98,15 @@ namespace tower120::v2{
             }
         };
 
-        template<class T, bool is_trackable_base = std::is_base_of_v<trackable_base, T>>
+        template<class T, bool is_trackable_base =
+            std::is_base_of<trackable_base, T>::value && !std::is_base_of<detail::trackable_tag, T>::value>
         class trackable_ptr_;
 
         template<class T>
         class trackable_ptr_<T, true> : public detail::trackable_ptr_base {
-            static_assert(std::is_base_of_v<trackable_base, T>, "");
-            static_assert(!std::is_base_of_v<detail::trackable_tag, T>, "");
+            /*static_assert(std::is_base_of_v<trackable_base, T>, "");
+            static_assert(!std::is_base_of_v<detail::trackable_tag, T>,
+                "Don't pass trackable<T> to trackable_ptr, like trackable_ptr<trackable<T>>. Pass just T trackable_ptr<T>.");*/
         public:
             trackable_ptr_() = default;
             explicit trackable_ptr_(T* obj) noexcept
@@ -190,4 +192,4 @@ namespace tower120::v2{
         return ptr->obj;
     }
 
-}
+}}
