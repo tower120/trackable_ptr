@@ -4,7 +4,7 @@
 #include "trackable_base.h"
 #include "trackable.h"
 
-namespace tower120{ namespace v2{
+namespace tower120{
     namespace detail{
 
         class trackable_ptr_base {
@@ -209,4 +209,4 @@ namespace tower120{ namespace v2{
         return ptr->obj;
     }
 
-}}
+}

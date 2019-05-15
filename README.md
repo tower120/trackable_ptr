@@ -1,10 +1,8 @@
 # trackable_ptr
 
-Trackable pointer. When trackable object moved/destroyed, trackers updated with new object's pointer.
+Trackable pointer. When `trackable` object moved/destroyed, `trackable_ptr`s updated with new object's pointer.
 
 Allow to have stable pointer on any movable object (in single-threaded environment). Objects may be stack allocated.
-
-[Live example](http://coliru.stacked-crooked.com/a/c6a2e71ea86f8902)
 
 ```c++
 struct Data{
@@ -27,9 +25,40 @@ list1.emplace_back();
 std::cout << data->x;
 ```
 
+```cpp
+struct Box;
 
-Dead elements have nullptr `trackable_ptr`'s.
+struct Corner{
+    trackable_ptr<Box> box;
+    int x = 0;
+    int y = 0;
+};
 
+struct Box : trackable_base {
+    Corner lt{this};
+    Corner rb{this};
+};
+
+std::vector<Box> boxes;
+
+// Box can be moved around. Corner::box always valid.
+// trackable_ptr<Box> can be stored in lambda callback.
+
+Box& active_box = boxes[i];
+on_some_event([box = trackable_ptr<Box>(&active_box)](){
+    if (!box) return;
+    std::cout << box->lt.x;
+});
+
+```
+
+#### Behavior
+
+On `trackable` destruction - all `trackable_ptr`s becomes nullptr.
+
+On `trackable` move - all `trackable_ptr`s updates with new object location.
+
+On `trackable` copy - `trackable_ptr`s unaffected.
 
 
 #### Interaction with `std::vector`
@@ -71,6 +100,10 @@ int main() {
 `get_iterator` / `get_index` allow you to get iterator / index from `trackable_ptr`. And in this way have "non-invalidatable iterators" for `std::vector` compatible containers.
 
 
+#### `trackable_base`
+
+Inherit this, if you want your class to be compatible with `trackable_ptr`.
+
 #### `trackable<T>`
 
 
@@ -98,25 +131,17 @@ Usefull for use in containers. For example, it is not required for `std::vector`
 #### `trackable_ptr<T>`
 
  * `trackable_ptr()` - construct with nullptr
+ * `trackable_ptr(T*)` - add this to `trackable` trackers list.
  * `trackable_ptr(trackable<T>*)` - add this to `trackable` trackers list.
- * `trackable_ptr(trackable_ptr&& other)` - set other's pointer. Update trackers list with new address. other becomes nullptr.
- * `trackable_ptr(const trackable_ptr& other)` - copy other pointer, and add this to `trackable` trackers list.
- * `trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then copy ctr.
- * `trackable_ptr& operator=(const trackable_ptr&)` - call destructor, then move ctr.
- * `bool alive() const` - true if not nullptr
- * `operator bool() const` - return `alive()`
- * `T* get_trackable()` - return pointer of trackable, that holds object.
+ * `operator bool() const` - return true if not nullptr
  * `const T* get_trackable() const`
- * `T* get()` - return object pointer.
- * `const T* get() const`
- * `T* operator->()`
- * `const T* operator->() const`
- * `T& operator*()`
- * `const T& operator*() const`
+ * `T* get() const` - return object pointer.
+ * `T* operator->() const`
+ * `T& operator*() const`
  * `~trackable_ptr()` - exclude this from trackers list.
 
 
 ### Overhead
  * 1 ptr for `trackable`
  * 3 ptr for `trackable_ptr`
- * O(n) complexity for moving/destroying `trackable`. Where n = `tracker_ptr`s per  `trackable` .
+ * O(n) complexity for moving/destroying `trackable`. Where n = `tracker_ptr`s per `trackable`.

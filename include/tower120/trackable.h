@@ -2,7 +2,7 @@
 
 #include "trackable_base.h"
 
-namespace tower120 { namespace v2 {
+namespace tower120 {
     namespace detail {
         struct trackable_tag{};
     }
@@ -61,4 +61,4 @@ namespace tower120 { namespace v2 {
         unique_trackable(const unique_trackable&) = delete;
         unique_trackable& operator=(const unique_trackable&) = delete;
     };
-}}
+}

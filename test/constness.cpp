@@ -6,7 +6,7 @@
 #include <tower120/trackable.h>
 #include <tower120/trackable_ptr.h>
 
-using namespace tower120::v2;
+using namespace tower120;
 
 template<class T>
 constexpr const bool is_const =
