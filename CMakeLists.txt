@@ -28,7 +28,8 @@ function(_add_failure_test TESTNAME FIRSTSOURCE)
 #                      EXCLUDE_FROM_DEFAULT_BUILD TRUE)
 
   add_test(${TESTNAME} ${TESTNAME})
-  set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
+  set_property(TEST ${TESTNAME} PROPERTY WILL_FAIL TRUE)
+  # set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
   # PASS_REGULAR_EXPRESSION ? instead of WILL_FAIL
 endfunction(_add_failure_test)
 
