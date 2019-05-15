@@ -104,22 +104,39 @@ int main() {
 
 Inherit this, if you want your class to be compatible with `trackable_ptr`.
 
+```cpp
+struct MyClass : trackable_base {}
+
+MyClass m;
+trackable_ptr<MyClass> p = &m;
+
+```
+
 #### `trackable<T>`
 
+```cpp
+trackable<int> i;
+trackable_ptr<int> p = &i;
 
- * `trackable_ptr()` - construct object with default constructor, if possible.
+auto i2 = std::move(i);
+assert(p.get() == i2.get());
+
+```
+
+ * `trackable()` - construct object with default constructor, if possible.
+ * `trackable(T&&)` - conversion constructor.
  * `trackable(Args&&... args)` - in-place construct object.
- * `trackable(trackable&& other) noexcept` - move object, and update all `trackable_ptr`'s with new address. All `trackable_ptr`'s from `other` now point to this.
- * `trackable(const trackable&)` - copy object, **does not** update `trackable_ptr`'s.
- * `trackable& operator=(trackable&&) noexcept` - call destructor, then move constructor.
- * `trackable& operator=(const trackable&)` - same as copy ctr.
+ * `trackable(trackable&& other)`
+ * `trackable(const trackable&)`
+ * `trackable& operator=(trackable&&)`
+ * `trackable& operator=(const trackable&)`
  * `T* get()` - return object pointer.
  * `const T* get() const`
  * `T* operator->()`
  * `const T* operator->() const`
  * `T& operator*()`
  * `const T& operator*() const`
- * `~trackable() noexcept` - update all `trackable_ptr`'s with new nullptr.
+ * `~trackable()` - update all `trackable_ptr`'s with new nullptr.
 
 #### `unique_trackable<T>`
 
@@ -131,10 +148,9 @@ Usefull for use in containers. For example, it is not required for `std::vector`
 #### `trackable_ptr<T>`
 
  * `trackable_ptr()` - construct with nullptr
- * `trackable_ptr(T*)` - add this to `trackable` trackers list.
- * `trackable_ptr(trackable<T>*)` - add this to `trackable` trackers list.
+ * `trackable_ptr(T*)`
+ * `trackable_ptr(trackable<T>*)`
  * `operator bool() const` - return true if not nullptr
- * `const T* get_trackable() const`
  * `T* get() const` - return object pointer.
  * `T* operator->() const`
  * `T& operator*() const`
