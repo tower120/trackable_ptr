@@ -160,4 +160,5 @@ Usefull for use in containers. For example, it is not required for `std::vector`
 ### Overhead
  * 1 ptr for `trackable`
  * 3 ptr for `trackable_ptr`
- * O(n) complexity for moving/destroying `trackable`. Where n = `tracker_ptr`s per `trackable`.
+ * O(n) complexity for moving/destroying `trackable`. Where n = `tracker_ptr`s per `trackable`
+ * O(1) complexity for moving/destroying `trackable_ptr`
