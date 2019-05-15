@@ -20,7 +20,7 @@ function(_add_test TESTNAME FIRSTSOURCE)
   add_test(${TESTNAME} ${TESTNAME})
 endfunction(_add_test)
 
-function(_add_failure_test TESTNAME FIRSTSOURCE)
+function(_add_failure_test TESTNAME FIRSTSOURCE PATTERN)
   add_executable(${TESTNAME} ${FIRSTSOURCE})
 
   set_target_properties(${TESTNAME} PROPERTIES
@@ -30,8 +30,9 @@ function(_add_failure_test TESTNAME FIRSTSOURCE)
   add_test(NAME ${TESTNAME}
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}" --target ${TESTNAME} --config $<CONFIGURATION>)
   #set_property(TEST ${TESTNAME} PROPERTY WILL_FAIL TRUE)
-  set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
-  # PASS_REGULAR_EXPRESSION ? instead of WILL_FAIL
+  #set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
+
+  set_property(TEST ${TESTNAME} PROPERTY PASS_REGULAR_EXPRESSION ${PATTERN})
 endfunction(_add_failure_test)
 
 
