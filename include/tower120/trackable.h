@@ -2,13 +2,13 @@
 
 #include "trackable_base.h"
 
-namespace tower120{ namespace v2{
-    namespace detail{
+namespace tower120 { namespace v2 {
+    namespace detail {
         struct trackable_tag{};
     }
 
     template<class T>
-    class trackable : public trackable_base, detail::trackable_tag{
+    class trackable : public trackable_base, detail::trackable_tag {
         T value;
     public:
         trackable() = default;

@@ -3,9 +3,10 @@
 #include "test_utils.h"
 #include "test_struct.h"
 
+#include <tower120/trackable.h>
 #include <tower120/trackable_ptr.h>
 
-using namespace tower120;
+using namespace tower120::v2;
 
 // trackable copy - only copy value
 
@@ -21,8 +22,8 @@ void copy_ctr_test(){
 
     REQUIRE(p1 != p2);
 
-    REQUIRE(d1.ptrs_count() == 1);
-    REQUIRE(d2.ptrs_count() == 1);
+    REQUIRE(ptrs_count(d1) == 1);
+    REQUIRE(ptrs_count(d2) == 1);
 }
 
 void copy_test(){
@@ -39,8 +40,8 @@ void copy_test(){
 
     REQUIRE(p1 != p2);
 
-    REQUIRE(d1.ptrs_count() == 1);
-    REQUIRE(d2.ptrs_count() == 1);
+    REQUIRE(ptrs_count(d1) == 1);
+    REQUIRE(ptrs_count(d2) == 1);
 }
 
 int main(){

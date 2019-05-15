@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "../test_utils.h"
-#include "../test_struct.h"
+#include "test_utils.h"
+#include "test_struct.h"
 
-#include <tower120/v2/trackable.h>
-#include <tower120/v2/trackable_ptr.h>
+#include <tower120/trackable.h>
+#include <tower120/trackable_ptr.h>
 
 using namespace tower120::v2;
 
