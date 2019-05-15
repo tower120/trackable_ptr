@@ -1,8 +1,8 @@
 #pragma once
 
 struct test_struct{
-    int i;
     static constexpr const int sentinel = -1;
+    int i = sentinel;
 
     test_struct() = default;
     test_struct(int i) noexcept : i(i) {}
