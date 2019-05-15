@@ -27,9 +27,10 @@ function(_add_failure_test TESTNAME FIRSTSOURCE)
       EXCLUDE_FROM_ALL true
       EXCLUDE_FROM_DEFAULT_BUILD true)
 
+  add_test(${TESTNAME} ${TESTNAME})
 
-  add_test(${TESTNAME}
-      COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${TESTNAME})
+#  add_test(${TESTNAME}
+#      COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${TESTNAME})
   #set_property(TEST ${TESTNAME} PROPERTY WILL_FAIL TRUE)
   set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
   # PASS_REGULAR_EXPRESSION ? instead of WILL_FAIL
