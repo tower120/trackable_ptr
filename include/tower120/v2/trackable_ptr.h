@@ -136,7 +136,7 @@ namespace tower120{ namespace v2{
             return fast_get<void>(is_trackable_base());
         }
 
-        void must_be_const(){ static_assert(std::is_const<T>::value, "T must be consta!"); }
+        void must_be_const(){ static_assert(std::is_const<T>::value, "T must be const!"); }
 
     public:
         trackable_ptr() = default;

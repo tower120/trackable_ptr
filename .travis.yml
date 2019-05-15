@@ -34,7 +34,7 @@ script:
   - cd build
   - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DSAN=$SAN
   - cmake --build .
-  - ctest -V
+  - ctest --output-on-failure
 
 notifications:
   email: false
