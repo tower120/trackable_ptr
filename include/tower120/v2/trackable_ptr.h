@@ -106,8 +106,10 @@ namespace tower120{ namespace v2{
     class trackable_ptr : public detail::trackable_ptr_base {
         static_assert(!std::is_reference<T>::value && !std::is_pointer<T>::value, "T must be type.");
 
-        static const constexpr bool is_trackable_base =
-            std::is_base_of<trackable_base, T>::value && !std::is_base_of<detail::trackable_tag, T>::value;
+        template<class T_ = T>
+        static auto is_trackable_base(){ return std::integral_constant<bool,
+            std::is_base_of<trackable_base, T_>::value && !std::is_base_of<detail::trackable_tag, T_>::value>{};
+        }
 
         template<class>
         T* get(/*is_trackable_base*/ std::true_type) const noexcept {
@@ -131,7 +133,7 @@ namespace tower120{ namespace v2{
             return p->get();
         }
         T* fast_get() const noexcept {
-            return fast_get<void>(std::integral_constant<bool, is_trackable_base>{});
+            return fast_get<void>(is_trackable_base());
         }
 
         void must_be_const(){ static_assert(std::is_const<T>::value, "T must be const!"); }
@@ -171,7 +173,7 @@ namespace tower120{ namespace v2{
         }
 
         T* get() const noexcept {
-            return get<void>(std::integral_constant<bool, is_trackable_base>{});
+            return get<void>(is_trackable_base());
         }
 
         T* operator->() const noexcept {
