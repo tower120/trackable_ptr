@@ -16,12 +16,12 @@ include_directories(include)
 # ----- TEST -------
 
 function(_add_test TESTNAME FIRSTSOURCE)
-  add_executable(${TESTNAME} ${FIRSTSOURCE} ${ARGN})
+  add_executable(${TESTNAME} ${FIRSTSOURCE})
   add_test(${TESTNAME} ${TESTNAME})
 endfunction(_add_test)
 
 function(_add_failure_test TESTNAME FIRSTSOURCE)
-  add_executable(${TESTNAME} ${FIRSTSOURCE} ${ARGN})
+  add_executable(${TESTNAME} ${FIRSTSOURCE})
 
   set_target_properties(${TESTNAME} PROPERTIES
       EXCLUDE_FROM_ALL true
