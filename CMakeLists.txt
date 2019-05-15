@@ -29,8 +29,6 @@ function(_add_failure_test TESTNAME FIRSTSOURCE PATTERN)
 
   add_test(NAME ${TESTNAME}
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}" --target ${TESTNAME} --config $<CONFIGURATION>)
-  #set_property(TEST ${TESTNAME} PROPERTY WILL_FAIL TRUE)
-  #set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
 
   set_property(TEST ${TESTNAME} PROPERTY PASS_REGULAR_EXPRESSION ${PATTERN})
 endfunction(_add_failure_test)

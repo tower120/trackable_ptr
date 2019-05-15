@@ -21,5 +21,19 @@ struct Box : trackable_base {
 };
 
 int main(){
+    auto assert_box = [](Box& box){
+        REQUIRE(box.lt.box == &box);
+        REQUIRE(box.rb.box == &box);
+    };
+
+    Box box;
+    trackable_ptr<Box> p = &box;
+    assert_box(box);
+
+    Box box2 = std::move(box);
+    assert_box(box2);
+
+    REQUIRE(p.get() == &box2);
+
     return 0;
 }
