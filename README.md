@@ -1,6 +1,6 @@
 # trackable_ptr
 
-Trackable pointer. When `trackable` object moved/destroyed, `trackable_ptr`s updated with new object's pointer.
+Trackable pointer. When `trackable` object moved/destroyed, `trackable_ptr`s updated with new object's location.
 
 Allow to have stable pointer on any movable object (in single-threaded environment). Objects may be stack allocated.
 
@@ -13,7 +13,7 @@ std::vector< unique_trackable<Data> > list1;
 
 list1.emplace_back();
 
-	trackable_ptr<Data> data {list1.back()};	//  store pointer to element
+  trackable_ptr<Data> data {list1.back()};	//  store pointer to element
 
 list1.emplace_back();
 list1.emplace_back();
