@@ -27,7 +27,7 @@ function(_add_failure_test TESTNAME FIRSTSOURCE)
       EXCLUDE_FROM_ALL true
       EXCLUDE_FROM_DEFAULT_BUILD true)
 
-  add_test(${TESTNAME}
+  add_test(NAME ${TESTNAME}
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}" --target ${TESTNAME} --config $<CONFIGURATION>)
   #set_property(TEST ${TESTNAME} PROPERTY WILL_FAIL TRUE)
   set_tests_properties(${TESTNAME} PROPERTIES WILL_FAIL TRUE)
