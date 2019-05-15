@@ -10,11 +10,11 @@ using namespace tower120::v2;
 
 template<class T>
 constexpr const bool is_const =
-    std::is_const_v<
+    std::is_const<
         std::remove_reference_t<
             std::remove_pointer_t<T>
         >
-    >;
+    >::value;
 
 struct Data : trackable_base {
     int i;
