@@ -41,14 +41,6 @@ void ctr_trackable(){
         REQUIRE(is_const<decltype(d1.get())>);
         REQUIRE(is_const<decltype(p1.get())>);
     }
-    // MUST NOT COMPILE
-    /*{
-        trackable<const test_struct> d1{{1}};
-        trackable_ptr<test_struct> p1 {&d1};
-        REQUIRE(p1->i == 1);
-        REQUIRE(is_const<decltype(d1.get())>);
-        REQUIRE(is_const<decltype(p1.get())>);
-    }*/
 }
 
 void ctr_trackable_base(){
@@ -71,14 +63,6 @@ void ctr_trackable_base(){
         REQUIRE(is_const<decltype(d1)>);
         REQUIRE(is_const<decltype(p1.get())>);
     }
-    // MUST NOT COMPILE
-    /*{
-        trackable<const test_struct> d1{{1}};
-        trackable_ptr<test_struct> p1 {&d1};
-        REQUIRE(p1->i == 1);
-        REQUIRE(is_const<decltype(d1.get())>);
-        REQUIRE(is_const<decltype(p1.get())>);
-    }*/
 }
 
 void assign_trackable(){
@@ -104,14 +88,6 @@ void assign_trackable(){
         REQUIRE(is_const<decltype(d1.get())>);
         REQUIRE(is_const<decltype(p1.get())>);
     }
-    // MUST NOT COMPILE
-    /*{
-        trackable<const test_struct> d1{{1}};
-        trackable_ptr<test_struct> p1 {&d1};
-        REQUIRE(p1->i == 1);
-        REQUIRE(is_const<decltype(d1.get())>);
-        REQUIRE(is_const<decltype(p1.get())>);
-    }*/
 }
 
 void assign_trackable_base(){
@@ -137,14 +113,6 @@ void assign_trackable_base(){
         REQUIRE(is_const<decltype(d1)>);
         REQUIRE(is_const<decltype(p1.get())>);
     }
-    // MUST NOT COMPILE
-    /*{
-        trackable<const test_struct> d1{{1}};
-        trackable_ptr<test_struct> p1 {&d1};
-        REQUIRE(p1->i == 1);
-        REQUIRE(is_const<decltype(d1.get())>);
-        REQUIRE(is_const<decltype(p1.get())>);
-    }*/
 }
 
 int main(){
