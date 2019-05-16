@@ -6,7 +6,7 @@ Allow to have stable pointer on any movable object (in single-threaded environme
 
 Header only. You need only "include" folder.
 
-**Warning!** Performance-wise it is not faster then `std::unique_ptr` (probably due to size grow). See benchmark.
+**Warning!** Performance-wise it is not faster then `std::unique_ptr` (probably due to size grow). See benchmark, your mileage may vary.
 
 ```c++
 struct Data{
