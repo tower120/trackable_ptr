@@ -1,6 +1,7 @@
 _add_test(unique_trackable unique_trackable.cpp)
 _add_test(trackable trackable.cpp)
 _add_test(trackable_base trackable_base.cpp)
+_add_test(trackable_ptr_extensions trackable_ptr_extensions.cpp)
 _add_test(constness constness.cpp)
 
 SET(constness_failure_msg "T must be const!")

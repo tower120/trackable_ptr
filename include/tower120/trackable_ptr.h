@@ -136,24 +136,44 @@ namespace tower120{
             return fast_get<void>(is_trackable_base());
         }
 
+        template<class>
+        T* get_trackable(/*is_trackable_base*/ std::true_type) const noexcept {
+            return get();
+        }
+        template<class>
+        trackable<T>* get_trackable(/*is_trackable_base*/ std::false_type) const noexcept {
+            return static_cast<trackable<T>*>(trackable_ptr_base::get());
+        }
+
         void must_be_const(){ static_assert(std::is_const<T>::value, "T must be const!"); }
 
     public:
         trackable_ptr() = default;
-        trackable_ptr(std::remove_const_t<T>* obj) noexcept
+        trackable_ptr(const trackable_ptr&) = default;
+
+        // conversion copy ctr
+        // TODO !!!
+        template<class Y>
+        trackable_ptr(const trackable_ptr<Y>& obj) noexcept
+            : trackable_ptr_base(obj.get())
+        {
+            static_assert(std::is_constructible<T, Y>::value, "trackable_ptr implicit conversion error.");
+        }
+
+        explicit trackable_ptr(std::remove_const_t<T>* obj) noexcept
             : trackable_ptr_base(obj) {}
         trackable_ptr& operator=(std::remove_const_t<T>* obj) noexcept {
             trackable_ptr_base::operator=(obj);
             return *this;
         }
-        trackable_ptr(trackable<std::remove_const_t<T>>* obj) noexcept
+        explicit trackable_ptr(trackable<std::remove_const_t<T>>* obj) noexcept
             : trackable_ptr_base(obj) {}
         trackable_ptr& operator=(trackable<std::remove_const_t<T>>* obj) noexcept {
             trackable_ptr_base::operator=(obj);
             return *this;
         }
         // const ctrs
-        trackable_ptr(const std::remove_const_t<T>* obj) noexcept
+        explicit trackable_ptr(const std::remove_const_t<T>* obj) noexcept
             : trackable_ptr_base(const_cast<std::remove_const_t<T>*>(obj)) {
             must_be_const();
         }
@@ -162,7 +182,7 @@ namespace tower120{
             trackable_ptr_base::operator=(const_cast<std::remove_const_t<T>*>(obj));
             return *this;
         }
-        trackable_ptr(trackable<const std::remove_const_t<T>>* obj) noexcept
+        explicit trackable_ptr(trackable<const std::remove_const_t<T>>* obj) noexcept
             : trackable_ptr_base(obj) {
             must_be_const();
         }
@@ -170,6 +190,12 @@ namespace tower120{
             must_be_const();
             trackable_ptr_base::operator=(obj);
             return *this;
+        }
+
+        /// return T* if T is trackable_base
+        ///   else trackable<T>*
+        auto* get_trackable() const noexcept {
+            return get_trackable<void>(is_trackable_base());
         }
 
         T* get() const noexcept {
