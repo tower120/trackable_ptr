@@ -129,11 +129,26 @@ void const_conversion(){
     }
 }
 
+void cross_const_compare(){
+    {
+        Data d{1};
+        trackable_ptr<Data> p {&d};
+        trackable_ptr<const Data> cp {p};
+    }
+    {
+        Data d{1};
+        trackable_ptr<Data> p {&d};
+        trackable_ptr<const Data> cp;
+        cp = p;
+    }
+}
+
 int main(){
     ctr_trackable();
     ctr_trackable_base();
     assign_trackable();
     assign_trackable_base();
     const_conversion();
+    cross_const_compare();
     return 0;
 }
