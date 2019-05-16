@@ -4,7 +4,7 @@ Trackable pointer. When `trackable` object moved/destroyed, `trackable_ptr`s upd
 
 Allow to have stable pointer on any movable object (in single-threaded environment). Objects may be stack allocated.
 
-Header only.
+Header only. You need only "include" folder.
 
 ```c++
 struct Data{
@@ -15,7 +15,7 @@ std::vector< unique_trackable<Data> > list1;
 
 list1.emplace_back();
 
-  trackable_ptr<Data> data {list1.back()};	//  store pointer to element
+  trackable_ptr<Data> ptr {list1.back()};	//  store pointer to element
 
 list1.emplace_back();
 list1.emplace_back();
@@ -23,8 +23,8 @@ list1.emplace_back();
 list1.emplace_back();
 // list 1 now uses another memory chuck. All pointers/iterators invalidated.
 
-// data still alive and accessible;
-std::cout << data->x;
+// ptr still alive and accessible;
+std::cout << ptr->x;
 ```
 
 ```cpp
@@ -53,7 +53,6 @@ on_some_event([box = trackable_ptr<Box>(&active_box)](){
     if (!box) return;
     std::cout << box->lt.x;
 });
-
 ```
 
 #### Behavior
@@ -73,7 +72,6 @@ struct MyClass : trackable_base {}
 
 MyClass m;
 trackable_ptr<MyClass> p = &m;
-
 ```
 
 #### `trackable<T>`
@@ -84,8 +82,9 @@ trackable_ptr<int> p = &i;
 
 auto i2 = std::move(i);
 assert(p.get() == i2.get());
-
 ```
+
+For the sake of sanity, `trackable<const T>` is forbidden, use `const trackable<T>` instead.
 
  * `trackable()` - construct object with default constructor, if possible.
  * `trackable(T&&)` - conversion constructor.
@@ -142,8 +141,8 @@ int main() {
 Work with contiguous containers only.
 
  * `in_container(const Container&, const trackable_ptr<T> &)` - check if trackable_ptr stored inside contiguous container.
- * `get_index(const Container&, const trackable_ptr<T>&)` - return index of element in contiguous container. trackable_ptr must inside contiguous container.
- * `get_iterator(Container&&, const trackable_ptr<T> &)` - return iterator of element in contiguous container. trackable_ptr must inside contiguous container.
+ * `get_index(const Container&, const trackable_ptr<T>&)` - return index of element in contiguous container. trackable_ptr must exists inside contiguous container.
+ * `get_iterator(Container&&, const trackable_ptr<T> &)` - return iterator of element in contiguous container. if trackable_ptr does not exists inside contiguous container, return end().
 
 
 ### Overhead
