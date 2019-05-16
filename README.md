@@ -31,6 +31,8 @@ std::cout << data->x;
 struct Box;
 
 struct Corner{
+    explicit Corner(Box* box) : box(box) {}
+
     trackable_ptr<Box> box;
     int x = 0;
     int y = 0;

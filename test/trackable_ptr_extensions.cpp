@@ -47,7 +47,6 @@ void test_trackable_base(){
     std::iter_swap(get_iterator(vec, p), std::prev(vec.end()));
     REQUIRE(p.get() == &vec.back());
     REQUIRE(p->i == 1);
-
 }
 
 int main(){
