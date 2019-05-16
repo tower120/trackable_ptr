@@ -17,22 +17,22 @@ int main(){
     {
         Data d{1};
         trackable_ptr p {&d};
-        REQUIRE(std::is_same_v<decltype(p), trackable_ptr<Data>>);
+        REQUIRE(std::is_same<decltype(p), trackable_ptr<Data>>::value);
     }
     {
         trackable<test_struct> d;
         trackable_ptr p {&d};
-        REQUIRE(std::is_same_v<decltype(p), trackable_ptr<test_struct>>);
+        REQUIRE(std::is_same<decltype(p), trackable_ptr<test_struct>>::value);
     }
     {
         const Data d{1};
         trackable_ptr p {&d};
-        REQUIRE(std::is_same_v<decltype(p), trackable_ptr<const Data>>);
+        REQUIRE(std::is_same<decltype(p), trackable_ptr<const Data>>::value);
     }
     {
         const trackable<test_struct> d;
         trackable_ptr p {&d};
-        REQUIRE(std::is_same_v<decltype(p), trackable_ptr<const test_struct>>);
+        REQUIRE(std::is_same<decltype(p), trackable_ptr<const test_struct>>::value);
     }
 #endif
     return 0;
