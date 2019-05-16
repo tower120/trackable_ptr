@@ -6,3 +6,5 @@ read test
 176447232 trackable 546
 176447232 basic 31
 176447232 unique_ptr 187
+
+No performance gain even on read run in compare to unique_ptr, due to substantial object size grow(+3ptr).
