@@ -33,6 +33,5 @@ function(_add_failure_test TESTNAME FIRSTSOURCE PATTERN)
   set_property(TEST ${TESTNAME} PROPERTY PASS_REGULAR_EXPRESSION ${PATTERN})
 endfunction(_add_failure_test)
 
-
 enable_testing()
 add_subdirectory(test)

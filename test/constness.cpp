@@ -115,10 +115,25 @@ void assign_trackable_base(){
     }
 }
 
+void const_conversion(){
+    {
+        Data d{1};
+        trackable_ptr<Data> p {&d};
+        trackable_ptr<const Data> cp {p};
+    }
+    {
+        Data d{1};
+        trackable_ptr<Data> p {&d};
+        trackable_ptr<const Data> cp;
+        cp = p;
+    }
+}
+
 int main(){
     ctr_trackable();
     ctr_trackable_base();
     assign_trackable();
     assign_trackable_base();
+    const_conversion();
     return 0;
 }

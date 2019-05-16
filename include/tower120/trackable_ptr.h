@@ -147,17 +147,28 @@ namespace tower120{
 
         void must_be_const(){ static_assert(std::is_const<T>::value, "T must be const!"); }
 
+        template<class Y>
+        void must_be_convertible(){
+            static_assert(std::is_constructible<T&, Y&>::value, "trackable_ptr implicit conversion error.");
+        }
+
     public:
         trackable_ptr() = default;
         trackable_ptr(const trackable_ptr&) = default;
 
         // conversion copy ctr
-        // TODO !!!
         template<class Y>
         trackable_ptr(const trackable_ptr<Y>& obj) noexcept
-            : trackable_ptr_base(obj.get())
+            : trackable_ptr_base(obj)
         {
-            static_assert(std::is_constructible<T, Y>::value, "trackable_ptr implicit conversion error.");
+            must_be_convertible<Y>();
+        }
+        // conversion move ctr
+        template<class Y>
+        trackable_ptr(trackable_ptr<Y>&& obj) noexcept
+            : trackable_ptr_base(std::move(obj))
+        {
+            must_be_convertible<Y>();
         }
 
         explicit trackable_ptr(std::remove_const_t<T>* obj) noexcept
@@ -216,12 +227,14 @@ namespace tower120{
             return detail::trackable_ptr_base::get() != nullptr;
         }
 
-        // TODO: add cross-const comparison
-
-        bool operator==(const trackable_ptr& other) const noexcept {
+        template<class Y>
+        bool operator==(const trackable_ptr<Y>& other) const noexcept {
+            must_be_convertible<Y>();
             return detail::trackable_ptr_base::get() == other.detail::trackable_ptr_base::get();
         }
-        bool operator!=(const trackable_ptr& other) const noexcept {
+        template<class Y>
+        bool operator!=(const trackable_ptr<Y>& other) const noexcept {
+            must_be_convertible<Y>();
             return detail::trackable_ptr_base::get() != other.detail::trackable_ptr_base::get();
         }
     };
