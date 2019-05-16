@@ -1,10 +1,10 @@
 fill test
 trackable 78
-basic 0
-unique_ptr 78
+basic 15
+unique_ptr 62
 read test
-176447232 trackable 546
-176447232 basic 31
-176447232 unique_ptr 187
+176447232 trackable 453
+176447232 basic 234
+176447232 unique_ptr 453
 
 No performance gain even on read run in compare to unique_ptr, due to substantial object size grow(+3ptr).
