@@ -60,7 +60,7 @@ void read_benchmark(){
         }
         int sum = 0;
         auto t = benchmark(times, [&](){
-            for(auto& e : ptrs){
+            for(const auto& e : ptrs){
                 sum += e->x + e->y;
             }
         });
@@ -78,7 +78,7 @@ void read_benchmark(){
         }
         int sum = 0;
         auto t = benchmark(times, [&](){
-            for(auto& e : ptrs){
+            for(const auto& e : ptrs){
                 sum += e->x + e->y;
             }
         });

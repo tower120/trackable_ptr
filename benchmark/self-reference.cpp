@@ -53,12 +53,14 @@ namespace basic{
     struct Box;
 
     struct Corner{
+        explicit Corner(Box* box) : box(box) {}
+        Box* box;
         int i;
     };
 
     struct Box {
-        Corner lt;
-        Corner rb;
+        Corner lt{this};
+        Corner rb{this};
 
         int sum() const {
             return lt.i + rb.i;
