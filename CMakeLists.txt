@@ -13,6 +13,10 @@ endif()
 
 include_directories(include)
 
+# ----- BENCHMARK -------
+
+add_subdirectory(benchmark)
+
 # ----- TEST -------
 
 function(_add_test TESTNAME FIRSTSOURCE)
