@@ -9,6 +9,8 @@ namespace tower120 {
 
     template<class T>
     class trackable : public trackable_base, detail::trackable_tag {
+        static_assert(!std::is_const<T>::value, "T must not be const!");
+
         T value;
     public:
         trackable() = default;

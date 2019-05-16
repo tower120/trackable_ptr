@@ -10,7 +10,7 @@ namespace detail{
     }
 }
 
-# define REQUIRE(expr)				\
-  ((expr)							\
+# define REQUIRE(...)				\
+  ((__VA_ARGS__)					\
    ? (void)(0)						\
-   : ::detail::require_failed (#expr, __FILE__, __LINE__))
+   : ::detail::require_failed (#__VA_ARGS__, __FILE__, __LINE__))

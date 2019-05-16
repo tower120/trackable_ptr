@@ -35,7 +35,7 @@ void ctr_trackable(){
         REQUIRE(is_const<decltype(p1.get())>);
     }
     {
-        trackable<const test_struct> d1{{1}};
+        const trackable<test_struct> d1{{1}};
         trackable_ptr<const test_struct> p1 {&d1};
         REQUIRE(p1->i == 1);
         REQUIRE(is_const<decltype(d1.get())>);
@@ -81,7 +81,7 @@ void assign_trackable(){
         REQUIRE(is_const<decltype(p1.get())>);
     }
     {
-        trackable<const test_struct> d1{1};
+        const trackable<test_struct> d1{1};
         trackable_ptr<const test_struct> p1;
         p1 = &d1;
         REQUIRE(p1->i == 1);
@@ -134,12 +134,13 @@ void cross_const_compare(){
         Data d{1};
         trackable_ptr<Data> p {&d};
         trackable_ptr<const Data> cp {p};
+        REQUIRE(cp == p);
     }
     {
-        Data d{1};
-        trackable_ptr<Data> p {&d};
-        trackable_ptr<const Data> cp;
-        cp = p;
+        trackable<test_struct> d{1};
+        trackable_ptr<test_struct> p {&d};
+        trackable_ptr<const test_struct> cp{p};
+        REQUIRE(cp == p);
     }
 }
 
