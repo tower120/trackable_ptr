@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tower120/trackable_ptr.svg?branch=trackable_base)](https://travis-ci.org/tower120/trackable_ptr)
+
 # trackable_ptr
 
 Trackable pointer. When `trackable` object moved/destroyed, `trackable_ptr`s updated with new object's location.
